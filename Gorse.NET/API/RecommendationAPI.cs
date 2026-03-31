@@ -6,26 +6,10 @@ namespace Gorse.NET;
 public partial class Gorse
 {
     /// <summary>
-    /// Get recommendation for a user.
-    /// </summary>
-    public string[]? GetRecommend(string userId)
-    {
-        return _client.Request<string[], Object>(Method.Get, "api/recommend/" + userId, null);
-    }
-
-    /// <summary>
-    /// Get recommendation for a user asynchronously.
-    /// </summary>
-    public Task<string[]?> GetRecommendAsync(string userId)
-    {
-        return _client.RequestAsync<string[], Object>(Method.Get, "api/recommend/" + userId, null);
-    }
-
-    /// <summary>
     /// Get recommendation with scores for a user.
     /// Uses X-API-Version: 2 header to return scores.
     /// </summary>
-    public List<UserScore>? GetRecommendWithScores(string userId)
+    public List<UserScore>? GetRecommend(string userId)
     {
         return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get, "api/recommend/" + userId, null, 
             new Dictionary<string, string> { { "X-API-Version", "2" } });
@@ -35,7 +19,7 @@ public partial class Gorse
     /// Get recommendation with scores for a user asynchronously.
     /// Uses X-API-Version: 2 header to return scores.
     /// </summary>
-    public Task<List<UserScore>?> GetRecommendWithScoresAsync(string userId)
+    public Task<List<UserScore>?> GetRecommendAsync(string userId)
     {
         return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get, "api/recommend/" + userId, null,
             new Dictionary<string, string> { { "X-API-Version", "2" } });
