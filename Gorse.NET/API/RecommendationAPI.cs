@@ -11,7 +11,16 @@ public partial class Gorse
     /// </summary>
     public List<UserScore>? GetRecommend(string userId)
     {
-        return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get, "api/recommend/" + userId, null, 
+        return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get,
+            "api/recommend/" + Uri.EscapeDataString(userId), null,
+            new Dictionary<string, string> { { "X-API-Version", "2" } });
+    }
+
+    public List<UserScore>? GetRecommend(string userId, IEnumerable<string>? categories,
+        string? writeBackType, string? writeBackDelay, int? n, int? offset)
+    {
+        return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get,
+            GetRecommendResource(userId, categories, writeBackType, writeBackDelay, n, offset), null,
             new Dictionary<string, string> { { "X-API-Version", "2" } });
     }
 
@@ -21,8 +30,48 @@ public partial class Gorse
     /// </summary>
     public Task<List<UserScore>?> GetRecommendAsync(string userId)
     {
-        return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get, "api/recommend/" + userId, null,
+        return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get,
+            "api/recommend/" + Uri.EscapeDataString(userId), null,
             new Dictionary<string, string> { { "X-API-Version", "2" } });
+    }
+
+    public Task<List<UserScore>?> GetRecommendAsync(string userId, IEnumerable<string>? categories,
+        string? writeBackType, string? writeBackDelay, int? n, int? offset)
+    {
+        return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get,
+            GetRecommendResource(userId, categories, writeBackType, writeBackDelay, n, offset), null,
+            new Dictionary<string, string> { { "X-API-Version", "2" } });
+    }
+
+    private static string GetRecommendResource(string userId, IEnumerable<string>? categories,
+        string? writeBackType, string? writeBackDelay, int? n, int? offset)
+    {
+        var query = new List<string>();
+        if (categories != null)
+        {
+            query.AddRange(categories
+                .Where(category => !string.IsNullOrEmpty(category))
+                .Select(category => "category=" + Uri.EscapeDataString(category)));
+        }
+        if (!string.IsNullOrEmpty(writeBackType))
+        {
+            query.Add("write-back-type=" + Uri.EscapeDataString(writeBackType));
+        }
+        if (!string.IsNullOrEmpty(writeBackDelay))
+        {
+            query.Add("write-back-delay=" + Uri.EscapeDataString(writeBackDelay));
+        }
+        if (n.HasValue)
+        {
+            query.Add("n=" + n.Value);
+        }
+        if (offset.HasValue)
+        {
+            query.Add("offset=" + offset.Value);
+        }
+
+        var resource = "api/recommend/" + Uri.EscapeDataString(userId);
+        return query.Count > 0 ? resource + "?" + string.Join("&", query) : resource;
     }
 
     public List<UserScore> GetUserNeighbors(string userId, int n = 100, int offset = 0)
