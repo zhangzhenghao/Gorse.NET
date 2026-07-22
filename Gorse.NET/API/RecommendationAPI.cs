@@ -9,15 +9,8 @@ public partial class Gorse
     /// Get recommendation with scores for a user.
     /// Uses X-API-Version: 2 header to return scores.
     /// </summary>
-    public List<UserScore>? GetRecommend(string userId)
-    {
-        return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get,
-            "api/recommend/" + Uri.EscapeDataString(userId), null,
-            new Dictionary<string, string> { { "X-API-Version", "2" } });
-    }
-
-    public List<UserScore>? GetRecommend(string userId, IEnumerable<string>? categories,
-        string? writeBackType, string? writeBackDelay, int? n, int? offset)
+    public List<UserScore>? GetRecommend(string userId, IEnumerable<string>? categories = null,
+        string? writeBackType = null, string? writeBackDelay = null, int? n = null, int? offset = null)
     {
         return _client.RequestWithHeaders<List<UserScore>, Object>(Method.Get,
             GetRecommendResource(userId, categories, writeBackType, writeBackDelay, n, offset), null,
@@ -28,15 +21,8 @@ public partial class Gorse
     /// Get recommendation with scores for a user asynchronously.
     /// Uses X-API-Version: 2 header to return scores.
     /// </summary>
-    public Task<List<UserScore>?> GetRecommendAsync(string userId)
-    {
-        return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get,
-            "api/recommend/" + Uri.EscapeDataString(userId), null,
-            new Dictionary<string, string> { { "X-API-Version", "2" } });
-    }
-
-    public Task<List<UserScore>?> GetRecommendAsync(string userId, IEnumerable<string>? categories,
-        string? writeBackType, string? writeBackDelay, int? n, int? offset)
+    public Task<List<UserScore>?> GetRecommendAsync(string userId, IEnumerable<string>? categories = null,
+        string? writeBackType = null, string? writeBackDelay = null, int? n = null, int? offset = null)
     {
         return _client.RequestWithHeadersAsync<List<UserScore>, Object>(Method.Get,
             GetRecommendResource(userId, categories, writeBackType, writeBackDelay, n, offset), null,
